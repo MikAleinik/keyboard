@@ -4,6 +4,7 @@ import KeyLanguage from "./key-language.js";
 
 export default class BoardItem {
   #KEY_CODE = "CODE";//Ключ кодов клавиш в объекте языков
+  COOKIE = "Keyboard";//Куки для сохранения последней раскладки
 
   #boardItem = undefined;//Объект панели с кнопками и лого
   #keyPanel = undefined;//Объект панели кнопок
@@ -160,15 +161,23 @@ export default class BoardItem {
     this.#keys[55].setType("space");
     this.#keys[56].setType("AltRight");
     this.#keys[57].setType("ControlRight");
-    this.#keys[59].setType("mini");
-    this.#keys[60].setType("mini");
+    this.#keys[58].setType("ArrowLeft");
+    this.#keys[59].setType("ArrowUp");
+    this.#keys[60].setType("ArrowDown");
+    this.#keys[61].setType("ArrowRight");
 
     let defaultLanguage = undefined;
-    for (let key of this.#language.keys()) {
-      if (key != this.#KEY_CODE) {
-        defaultLanguage = key;
-        break;
-      }
+    let lastLanguage = this.getCookie(this.COOKIE);
+    if (!lastLanguage) {
+      for (let key of this.#language.keys()) {
+        if (key != this.#KEY_CODE) {
+          defaultLanguage = key;
+          this.setCookie(this.COOKIE, defaultLanguage);
+          break;
+        }
+      }  
+    } else {
+      defaultLanguage = lastLanguage;
     }
     for (let i = 0; i < this.#keys.length; i++) {
       for (let item of this.#language) {
@@ -206,5 +215,40 @@ export default class BoardItem {
     containerRow.appendChild(this.#keys[indexFirst].getElement());
     containerRow.appendChild(containerColumn);
     containerRow.appendChild(this.#keys[indexLast].getElement());
+  }
+  /**
+   * Выполняет поиск куки по имени.
+   * @param {string} name имя куки 
+   * @returns куки в случае успеха или false в случае не удачи
+   */
+  getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : false;
+  }
+  /**
+   * Устанавливает куки с заданынми параметрами
+   * @param {string} name имя куки
+   * @param {string} value значение куки
+   * @param {object} options дополнительные параметры куки
+   */
+  setCookie(name, value, options = {}) {
+    options = {
+      path: '/',
+      ...options
+    };
+    if (options.expires instanceof Date) {
+      options.expires = options.expires.toUTCString();
+    }
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    for (let optionKey in options) {
+      updatedCookie += "; " + optionKey;
+      let optionValue = options[optionKey];
+      if (optionValue !== true) {
+        updatedCookie += "=" + optionValue;
+      }
+    }
+    document.cookie = updatedCookie;
   }
 }

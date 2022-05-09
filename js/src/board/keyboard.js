@@ -49,7 +49,6 @@ export default class KeyBoard {
     }));
     let languageKey = new KeyLanguage({
       name: this.#board.getLanguage(),
-      start: 0,
       callback: this.#board.setLanguage.bind(this.#board)
     });
     this.#board.setControl(languageKey);

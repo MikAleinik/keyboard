@@ -8,10 +8,6 @@ export default class Key {
   #screen = undefined;//Объект экрана
 
   #keyType = new Map([
-    ["mini", {
-      img: "./image/btn-mini.png",
-      class: "mini"
-    }],
     ["small", {
       img: "./image/btn-sm.png",
       class: "small"
@@ -23,6 +19,26 @@ export default class Key {
     ["space", {
       img: "./image/btn-lg.png",
       class: "space"
+    }],
+    ["ArrowUp", {
+      img: "./image/btn-mini.png",
+      class: "mini",
+      control: true
+    }],
+    ["ArrowDown", {
+      img: "./image/btn-mini.png",
+      class: "mini",
+      control: true
+    }],
+    ["ArrowLeft", {
+      img: "./image/btn-sm.png",
+      class: "small",
+      control: true
+    }],
+    ["ArrowRight", {
+      img: "./image/btn-sm.png",
+      class: "small",
+      control: true
     }],
     ["Tab", {
       img: "./image/btn-ctrl-sm.png",
@@ -215,6 +231,22 @@ export default class Key {
             this.#altCurrent = 1;
             break;
           }
+          case "Tab": {
+            this.#screen.add("\t");
+            break;
+          }
+          case "Enter": {
+            this.#screen.add("\r\n");
+            break;
+          }
+          case "ArrowUp":
+          case "ArrowDown":
+          case "ArrowLeft":
+          case "ArrowRight":
+          case "Backspace": {
+            document.dispatchEvent(new CustomEvent("changeText", { detail: { action: event.code } }));
+            break;
+          }
           default: { }
         }
       }
@@ -281,6 +313,14 @@ export default class Key {
             this.#key.children[2].classList.add("on");
             document.dispatchEvent(new CustomEvent("setRegistry", { detail: { index: 1 } }));
           }
+          break;
+        }
+        case "Tab": {
+          this.#screen.add("    ");
+          break;
+        }
+        case "Enter": {
+          this.#screen.add("\r\n");
           break;
         }
         default: { }

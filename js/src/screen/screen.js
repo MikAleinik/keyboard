@@ -13,6 +13,25 @@ export default class Screen {
       return false;
     };
     this.#textArea.addEventListener("click", this.#textAreaClicked.bind(this));
+    document.addEventListener("changeText", (event) => {
+      console.log(event.detail.action);
+      console.log(this.#textArea.selectionStart);
+      switch (event.detail.action) {
+        case "Backspace": {
+          this.delete();
+          break;
+        }
+        case "ArrowLeft": {
+          this.setCursorLeft();
+          break;
+        }
+        case "ArrowRight": {
+          this.setCursorRight();
+          break;
+        }
+        default: { }
+      }
+    });
   }
   /**
    * Возвращает объект экрана
@@ -26,10 +45,38 @@ export default class Screen {
    * @param {string} symbol
    */
   add(symbol) {
-    if (document.activeElement != this.#textArea) {
-      this.#textArea.value += symbol;
-      this.#camera.on();
-    }
+    let currentPos = this.#textArea.selectionStart;
+    console.log(this.#textArea.value.substring(0, currentPos));
+    console.log(this.#textArea.value.substring(currentPos + 1));
+    this.#textArea.value = this.#textArea.value.substring(0, currentPos) + symbol + this.#textArea.value.substring(currentPos);
+    this.#textArea.selectionStart = currentPos + 1;
+    this.#textArea.selectionEnd = currentPos + 1;
+    this.#camera.on();
+  }
+  /**
+   * Удаляет символ в текущей позиции курсора
+   */
+  delete() {
+    let currentPos = this.#textArea.selectionStart;
+    this.#textArea.value = this.#textArea.value.substring(0, currentPos - 1) + this.#textArea.value.substring(currentPos);
+    this.#textArea.selectionStart = currentPos - 1;
+    this.#textArea.selectionEnd = currentPos - 1;
+  }
+  /**
+   * Перемещает курсор на один симовол влево от текущей позиции курсора
+   */
+   setCursorLeft() {
+    let currentPos = this.#textArea.selectionStart;
+    this.#textArea.selectionStart = currentPos - 1;
+    this.#textArea.selectionEnd = currentPos - 1;
+  }
+  /**
+   * Перемещает курсор на один симовол влево от текущей позиции курсора
+   */
+   setCursorRight() {
+    let currentPos = this.#textArea.selectionStart;
+    this.#textArea.selectionStart = currentPos + 1;
+    this.#textArea.selectionEnd = currentPos + 1;
   }
   /**
    * Обработчик события клика по текстовому полю
