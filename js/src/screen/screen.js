@@ -32,6 +32,7 @@ export default class Screen {
         default: { }
       }
     });
+    this.#textArea.value = this.getStartText();
   }
   /**
    * Возвращает объект экрана
@@ -65,7 +66,7 @@ export default class Screen {
   /**
    * Перемещает курсор на один симовол влево от текущей позиции курсора
    */
-   setCursorLeft() {
+  setCursorLeft() {
     let currentPos = this.#textArea.selectionStart;
     this.#textArea.selectionStart = currentPos - 1;
     this.#textArea.selectionEnd = currentPos - 1;
@@ -73,7 +74,7 @@ export default class Screen {
   /**
    * Перемещает курсор на один симовол влево от текущей позиции курсора
    */
-   setCursorRight() {
+  setCursorRight() {
     let currentPos = this.#textArea.selectionStart;
     this.#textArea.selectionStart = currentPos + 1;
     this.#textArea.selectionEnd = currentPos + 1;
@@ -98,5 +99,16 @@ export default class Screen {
     this.#textArea.classList.add("screen_item");
     this.#screen.children[1].insertAdjacentElement("beforeend", this.#textArea);
     return true;
+  }
+  /**
+   * Выводит стартовый текст
+   */
+  getStartText(){
+    let result = "Добрый день уважаемый проверяющий.\r\n";
+    result += "Переключение раскладки Shift + Alt\r\n";
+    result += "Подсветка клавиатуры вкл/выкл кнопкой на панели\r\n";
+    result += "Могут быть некорректности отображения при разных разрешениях\r\n";
+    result += "Спасибо, что уделили время. Всего наилучшего!";
+    return result;
   }
 }
